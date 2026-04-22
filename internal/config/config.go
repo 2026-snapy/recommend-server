@@ -8,6 +8,7 @@ import (
 
 type Config struct {
 	Addr string
+	DBUrl string
 }
 
 func Load() *Config {
@@ -17,7 +18,10 @@ func Load() *Config {
         addr = ":5000"
     }
 
+	dbUrl := os.Getenv("DB_URL")
+
 	return &Config{
 		Addr: addr,
+		DBUrl: dbUrl,
 	}
 }
