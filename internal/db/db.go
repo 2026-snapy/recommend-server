@@ -9,7 +9,7 @@ import (
 )
 
 type DB struct {
-	client *sqlx.DB
+	Client *sqlx.DB
 }
 
 func NewDB(cfg *config.Config) (*DB, error) {
