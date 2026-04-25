@@ -5,6 +5,7 @@ import (
 	"net"
 	"os"
 
+	"github.com/2026-snapy/recommend-server/internal/album"
 	"github.com/2026-snapy/recommend-server/internal/config"
 	"github.com/2026-snapy/recommend-server/internal/db"
 	"github.com/2026-snapy/recommend-server/internal/friend"
@@ -27,6 +28,7 @@ func main() {
 	}
 
 	friendRepo := friend.NewFriendRepository(db)
+	albumRepo := album.NewDailyAlbumRepository(db)
 	
 	s := grpc.NewServer()
 	
