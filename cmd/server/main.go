@@ -1,0 +1,44 @@
+package main
+
+import (
+	"log/slog"
+	"net"
+	"os"
+
+	feedpb "github.com/2026-snapy/proto/go/feed"
+	"github.com/2026-snapy/recommend-server/internal/album"
+	"github.com/2026-snapy/recommend-server/internal/config"
+	"github.com/2026-snapy/recommend-server/internal/db"
+	"github.com/2026-snapy/recommend-server/internal/feed"
+	"github.com/2026-snapy/recommend-server/internal/friend"
+	"google.golang.org/grpc"
+)
+
+func main() {
+	cfg := config.Load()
+
+	lis, err := net.Listen("tcp", cfg.Addr)
+	if err != nil {
+        slog.Error("failed to listen", "error", err)
+		os.Exit(1)
+    }
+
+	db, err := db.NewDB(cfg)
+	if err != nil {
+		slog.Error("failed to connect database", "error", err)
+		os.Exit(1)
+	}
+
+	friendRepo := friend.NewFriendRepository(db)
+	albumRepo := album.NewDailyAlbumRepository(db)
+	feedService := feed.NewFeedService(friendRepo, albumRepo)
+
+	s := grpc.NewServer()
+	feedpb.RegisterRecommendServiceServer(s, feed.NewServer(feedService))
+
+	slog.Info("Server listening on " + cfg.Addr)
+	if err := s.Serve(lis); err != nil {
+		slog.Error("failed to serve", "error", err)
+		os.Exit(1)
+    }
+}
