@@ -1,0 +1,8 @@
+services:
+  recommend-server:
+    image: ghcr.io/2026-snapy/recommend-server:latest
+    container_name: recommend-server
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:5000:5000"
