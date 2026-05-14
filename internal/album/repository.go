@@ -24,7 +24,8 @@ func (d *DailyAlbumRepository) CursorById(id int64) (Cursor, error) {
 	var c Cursor
 	err := d.db.Client.Get(
 		&c,
-		"SELECT photo_count, published_at FROM daily_albums WHERE id = ?",
+		`SELECT photo_count, published_at
+		FROM daily_albums WHERE id = ?`,
 		id,
 	)
 	if err != nil {
@@ -36,11 +37,11 @@ func (d *DailyAlbumRepository) CursorById(id int64) (Cursor, error) {
 
 func (d *DailyAlbumRepository) IdsInUserIds(userIds []int64) ([]int64, error) {
 	query, args, err:= sqlx.In(
-		"SELECT id FROM daily_albums " +
-		"WHERE user_id IN (?) " +
-		"AND status = 'PUBLISHED' " +
-		"ORDER BY published_at DESC, photo_count DESC " +
-		"LIMIT 300",
+		`SELECT id FROM daily_albums
+		WHERE user_id IN (?)
+		AND status = 'PUBLISHED'
+		ORDER BY published_at DESC, photo_count DESC
+		LIMIT 300`,
 		userIds,
 	)
 	if err != nil {
@@ -60,16 +61,16 @@ func (d *DailyAlbumRepository) IdsInUserIds(userIds []int64) ([]int64, error) {
 
 func (d *DailyAlbumRepository) IdsInUserIdsWithCursor(userIds []int64, cursorId int64, c Cursor) ([]int64, error) {
 	query, args, err:= sqlx.In(
-		"SELECT id FROM daily_albums " +
-		"WHERE user_id IN (?) " +
-		"AND status = 'PUBLISHED' " +
-		"AND ( " +
-		"published_at < ? " +
-		"OR (published_at = ? AND photo_count < ?) " +
-		"OR (published_at = ? AND photo_count = ? AND id < ?) " +
-		") " +
-		"ORDER BY published_at DESC, photo_count DESC " +
-		"LIMIT 300 ",
+		`SELECT id FROM daily_albums
+		WHERE user_id IN (?)
+		AND status = 'PUBLISHED'
+		AND (
+		published_at < ?
+		OR (published_at = ? AND photo_count < ?)
+		OR (published_at = ? AND photo_count = ? AND id < ?)
+		)
+		ORDER BY published_at DESC, photo_count DESC
+		LIMIT 300`,
 		userIds,
 		c.PublishedAt,
 		c.PublishedAt,
