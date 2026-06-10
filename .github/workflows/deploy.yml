@@ -30,6 +30,7 @@ jobs:
           script: |
             set -e
             cd ~/recommend-server
+            echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USER}" --password-stdin
             docker compose pull
             docker compose up -d
             docker image prune -f
