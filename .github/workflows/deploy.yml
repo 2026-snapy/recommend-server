@@ -26,7 +26,7 @@ jobs:
         with:
           host: ${{ secrets.AWS_HOST }}
           username: ${{ secrets.AWS_USER }}
-          password: ${{ secrets.AWS_PASSWORD }}
+          key: ${{ secrets.AWS_SSH_KEY }}
           script: |
             set -e
             cd ~/recommend-server
