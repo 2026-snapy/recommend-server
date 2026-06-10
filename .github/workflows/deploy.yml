@@ -21,6 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - name: GHCR Login
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.0
         with:
